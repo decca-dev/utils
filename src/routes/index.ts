@@ -6,10 +6,6 @@ import { validate } from "../utils/Middleware";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.status(200).send("hello");
-});
-
 router.use("/email", validate, emailRoute);
 router.use("/colors", validate, colorRoute);
 router.use("/db", dbRoute);

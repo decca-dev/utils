@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { config } from "dotenv";
 import { connect, set } from "mongoose";
 
@@ -19,6 +19,10 @@ connect(`${process.env.MONGO_URI}`)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).send("hello");
+});
 
 app.use("/api", routes);
 

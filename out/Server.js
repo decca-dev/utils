@@ -20,5 +20,8 @@ var PORT = 8080;
 });
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.get("/", function (req, res) {
+    res.status(200).send("hello");
+});
 app.use("/api", index_1.default);
 app.listen(PORT, function () { return Logger_1.default.info("Started on port " + PORT, "server"); });
