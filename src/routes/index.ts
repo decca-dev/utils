@@ -11,7 +11,7 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 router.use("/email", validate, emailRoute);
-router.use("/colors", colorRoute);
-router.use("/db", validate, dbRoute);
+router.use("/colors", validate, colorRoute);
+router.use("/db", dbRoute);
 
 export default router;

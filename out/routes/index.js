@@ -13,6 +13,6 @@ router.get("/", function (req, res) {
     res.status(200).send("hello");
 });
 router.use("/email", Middleware_1.validate, Email_1.default);
-router.use("/colors", Colors_1.default);
-router.use("/db", Middleware_1.validate, Database_1.default);
+router.use("/colors", Middleware_1.validate, Colors_1.default);
+router.use("/db", Database_1.default);
 exports.default = router;

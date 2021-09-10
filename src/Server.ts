@@ -20,6 +20,6 @@ connect(`${process.env.MONGO_URI}`)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/", routes);
+app.use("/api", routes);
 
 app.listen(PORT, () => Logger.info(`Started on port ${PORT}`, "server"));

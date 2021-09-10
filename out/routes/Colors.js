@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var get_image_colors_1 = __importDefault(require("get-image-colors"));
 var router = (0, express_1.Router)();
-router.post("/getcolors", function (req, res) {
+router.post("/", function (req, res) {
     var image = req.body.image;
     if (!image)
         return res.status(400).json({ success: false, error: "Missing image" });

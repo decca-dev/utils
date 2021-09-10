@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
 import Project from "../models/Project";
+import { validate } from "../utils/Middleware";
 
 const validQueries = ["Project"];
 
 const router = Router();
 
-router.get("/db/:query", async (req: Request, res: Response) => {
+router.get("/:query", async (req: Request, res: Response) => {
   const { query } = req.params;
 
   if (!query)
@@ -20,17 +21,17 @@ router.get("/db/:query", async (req: Request, res: Response) => {
       .status(400)
       .json({ success: false, error: "Invalid query param" });
 
-  switch (query) {
+  switch (query.charAt(0).toUpperCase().concat(query.slice(1))) {
     case validQueries[0]:
       const { type } = req.query;
-      const validTypes = ["project", "contribution"];
-      let projects: any[] = [];
+      const validTypes = ["Project", "Contribution"];
       if (!type || !validTypes.includes(type as string)) {
-        projects.concat(await Project.find());
+        res.status(200).json({ success: true, data: await Project.find() });
       } else {
-        projects.concat(await Project.find({ type: type }));
+        res
+          .status(200)
+          .json({ success: true, data: await Project.find({ type: type }) });
       }
-      res.status(200).json({ success: true, data: projects });
       break;
 
     default:
@@ -39,7 +40,7 @@ router.get("/db/:query", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/db/:query", async (req: Request, res: Response) => {
+router.post("/:query", validate, async (req: Request, res: Response) => {
   const { query } = req.params;
 
   if (!query)
@@ -54,7 +55,7 @@ router.post("/db/:query", async (req: Request, res: Response) => {
       .status(400)
       .json({ success: false, error: "Invalid query param" });
 
-  switch (query) {
+  switch (query.charAt(0).toUpperCase().concat(query.slice(1))) {
     case validQueries[0]:
       try {
         const { name, description, type, image, url, githubURL } = req.body;
@@ -66,6 +67,7 @@ router.post("/db/:query", async (req: Request, res: Response) => {
           url: url ? url : "None",
           githubURL: githubURL,
         });
+        await project.save();
         res.status(200).json({ success: true, data: project });
       } catch (error) {
         res.status(400).json({ success: false, error: error.message });
@@ -78,7 +80,7 @@ router.post("/db/:query", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/db/:query", async (req: Request, res: Response) => {
+router.delete("/:query", validate, async (req: Request, res: Response) => {
   const { query } = req.params;
 
   if (!query)
@@ -93,7 +95,7 @@ router.delete("/db/:query", async (req: Request, res: Response) => {
       .status(400)
       .json({ success: false, error: "Invalid query param" });
 
-  switch (query) {
+  switch (query.charAt(0).toUpperCase().concat(query.slice(1))) {
     case validQueries[0]:
       try {
         const { name } = req.body;
@@ -113,7 +115,7 @@ router.delete("/db/:query", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/db/:query", async (req: Request, res: Response) => {
+router.put("/:query", validate, async (req: Request, res: Response) => {
   const { query } = req.params;
 
   if (!query)
@@ -128,7 +130,7 @@ router.put("/db/:query", async (req: Request, res: Response) => {
       .status(400)
       .json({ success: false, error: "Invalid query param" });
 
-  switch (query) {
+  switch (query.charAt(0).toUpperCase().concat(query.slice(1))) {
     case validQueries[0]:
       try {
         const { name, description, type, image, url, githubURL } = req.body;

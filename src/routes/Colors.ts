@@ -3,7 +3,7 @@ import getColors from "get-image-colors";
 
 const router = Router();
 
-router.post("/getcolors", (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   const { image } = req.body;
 
   if (!image)

@@ -41,12 +41,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var Project_1 = __importDefault(require("../models/Project"));
+var Middleware_1 = require("../utils/Middleware");
 var validQueries = ["Project"];
 var router = (0, express_1.Router)();
-router.get("/db/:query", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, _a, type, validTypes, projects, _b, _c, _d, _e;
-    return __generator(this, function (_f) {
-        switch (_f.label) {
+router.get("/:query", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, _a, type, validTypes, _b, _c, _d, _e;
+    var _f, _g;
+    return __generator(this, function (_h) {
+        switch (_h.label) {
             case 0:
                 query = req.params.query;
                 if (!query)
@@ -57,30 +59,31 @@ router.get("/db/:query", function (req, res) { return __awaiter(void 0, void 0, 
                     return [2 /*return*/, res
                             .status(400)
                             .json({ success: false, error: "Invalid query param" })];
-                _a = query;
+                _a = query.charAt(0).toUpperCase().concat(query.slice(1));
                 switch (_a) {
                     case validQueries[0]: return [3 /*break*/, 1];
                 }
                 return [3 /*break*/, 6];
             case 1:
                 type = req.query.type;
-                validTypes = ["project", "contribution"];
-                projects = [];
+                validTypes = ["Project", "Contribution"];
                 if (!(!type || !validTypes.includes(type))) return [3 /*break*/, 3];
-                _c = (_b = projects).concat;
+                _c = (_b = res.status(200)).json;
+                _f = { success: true };
                 return [4 /*yield*/, Project_1.default.find()];
             case 2:
-                _c.apply(_b, [_f.sent()]);
+                _c.apply(_b, [(_f.data = _h.sent(), _f)]);
                 return [3 /*break*/, 5];
             case 3:
-                _e = (_d = projects).concat;
+                _e = (_d = res
+                    .status(200))
+                    .json;
+                _g = { success: true };
                 return [4 /*yield*/, Project_1.default.find({ type: type })];
             case 4:
-                _e.apply(_d, [_f.sent()]);
-                _f.label = 5;
-            case 5:
-                res.status(200).json({ success: true, data: projects });
-                return [3 /*break*/, 7];
+                _e.apply(_d, [(_g.data = _h.sent(), _g)]);
+                _h.label = 5;
+            case 5: return [3 /*break*/, 7];
             case 6:
                 res.status(400).json({ success: false });
                 return [3 /*break*/, 7];
@@ -88,45 +91,55 @@ router.get("/db/:query", function (req, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-router.post("/db/:query", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, _a, name_1, description, type, image, url, githubURL, project;
-    return __generator(this, function (_b) {
-        query = req.params.query;
-        if (!query)
-            return [2 /*return*/, res
-                    .status(400)
-                    .json({ success: false, error: "Missing query param" })];
-        if (!validQueries.includes(query.charAt(0).toUpperCase().concat(query.slice(1))))
-            return [2 /*return*/, res
-                    .status(400)
-                    .json({ success: false, error: "Invalid query param" })];
-        switch (query) {
-            case validQueries[0]:
-                try {
-                    _a = req.body, name_1 = _a.name, description = _a.description, type = _a.type, image = _a.image, url = _a.url, githubURL = _a.githubURL;
-                    project = new Project_1.default({
-                        name: name_1,
-                        description: description,
-                        type: type,
-                        image: image,
-                        url: url ? url : "None",
-                        githubURL: githubURL,
-                    });
-                    res.status(200).json({ success: true, data: project });
+router.post("/:query", Middleware_1.validate, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, _a, _b, name_1, description, type, image, url, githubURL, project, error_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                query = req.params.query;
+                if (!query)
+                    return [2 /*return*/, res
+                            .status(400)
+                            .json({ success: false, error: "Missing query param" })];
+                if (!validQueries.includes(query.charAt(0).toUpperCase().concat(query.slice(1))))
+                    return [2 /*return*/, res
+                            .status(400)
+                            .json({ success: false, error: "Invalid query param" })];
+                _a = query.charAt(0).toUpperCase().concat(query.slice(1));
+                switch (_a) {
+                    case validQueries[0]: return [3 /*break*/, 1];
                 }
-                catch (error) {
-                    res.status(400).json({ success: false, error: error.message });
-                }
-                break;
-            default:
+                return [3 /*break*/, 5];
+            case 1:
+                _c.trys.push([1, 3, , 4]);
+                _b = req.body, name_1 = _b.name, description = _b.description, type = _b.type, image = _b.image, url = _b.url, githubURL = _b.githubURL;
+                project = new Project_1.default({
+                    name: name_1,
+                    description: description,
+                    type: type,
+                    image: image,
+                    url: url ? url : "None",
+                    githubURL: githubURL,
+                });
+                return [4 /*yield*/, project.save()];
+            case 2:
+                _c.sent();
+                res.status(200).json({ success: true, data: project });
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _c.sent();
+                res.status(400).json({ success: false, error: error_1.message });
+                return [3 /*break*/, 4];
+            case 4: return [3 /*break*/, 6];
+            case 5:
                 res.status(400).json({ success: false });
-                break;
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
-        return [2 /*return*/];
     });
 }); });
-router.delete("/db/:query", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, _a, name_2, project, error_1;
+router.delete("/:query", Middleware_1.validate, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, _a, name_2, project, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -139,7 +152,7 @@ router.delete("/db/:query", function (req, res) { return __awaiter(void 0, void 
                     return [2 /*return*/, res
                             .status(400)
                             .json({ success: false, error: "Invalid query param" })];
-                _a = query;
+                _a = query.charAt(0).toUpperCase().concat(query.slice(1));
                 switch (_a) {
                     case validQueries[0]: return [3 /*break*/, 1];
                 }
@@ -156,8 +169,8 @@ router.delete("/db/:query", function (req, res) { return __awaiter(void 0, void 
                 res.status(200).json({ success: true });
                 return [3 /*break*/, 4];
             case 3:
-                error_1 = _b.sent();
-                res.status(400).json({ success: false, error: error_1.message });
+                error_2 = _b.sent();
+                res.status(400).json({ success: false, error: error_2.message });
                 return [3 /*break*/, 4];
             case 4: return [3 /*break*/, 6];
             case 5:
@@ -167,8 +180,8 @@ router.delete("/db/:query", function (req, res) { return __awaiter(void 0, void 
         }
     });
 }); });
-router.put("/db/:query", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, _a, _b, name_3, description, type, image, url, githubURL, project, error_2;
+router.put("/:query", Middleware_1.validate, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, _a, _b, name_3, description, type, image, url, githubURL, project, error_3;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -181,7 +194,7 @@ router.put("/db/:query", function (req, res) { return __awaiter(void 0, void 0, 
                     return [2 /*return*/, res
                             .status(400)
                             .json({ success: false, error: "Invalid query param" })];
-                _a = query;
+                _a = query.charAt(0).toUpperCase().concat(query.slice(1));
                 switch (_a) {
                     case validQueries[0]: return [3 /*break*/, 1];
                 }
@@ -213,8 +226,8 @@ router.put("/db/:query", function (req, res) { return __awaiter(void 0, void 0, 
                 res.status(200).json({ success: true, data: project });
                 return [3 /*break*/, 5];
             case 4:
-                error_2 = _c.sent();
-                res.status(400).json({ success: false, error: error_2.message });
+                error_3 = _c.sent();
+                res.status(400).json({ success: false, error: error_3.message });
                 return [3 /*break*/, 5];
             case 5: return [3 /*break*/, 7];
             case 6:
