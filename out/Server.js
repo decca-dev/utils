@@ -20,6 +20,10 @@ var PORT = 8080;
 });
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use(function (req, res, next) {
+    res.header({ "Access-Control-Allow-Origin": "*" });
+    next();
+});
 app.get("/", function (req, res) {
     res.status(200).send("hello");
 });
